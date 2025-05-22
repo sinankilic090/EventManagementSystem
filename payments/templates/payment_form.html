@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Make a Payment</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container mt-5">
+    <h2 class="mb-4">Make a Payment</h2>
+
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        
+        <div class="mb-3">
+            <label for="card_holder" class="form-label">Card Holder</label>
+            <input type="text" id="card_holder" name="card_holder" class="form-control" placeholder="John Doe" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="card_number" class="form-label">Card Number</label>
+            <input type="text" id="card_number" name="card_number" maxlength="16" class="form-control" placeholder="1234 5678 9012 3456" required />
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">
+                <label for="expiry_date" class="form-label">Expiry Date</label>
+                <input type="text" id="expiry_date" name="expiry_date" placeholder="MM/YY" class="form-control" required />
+            </div>
+            <div class="col">
+                <label for="cvv" class="form-label">CVV</label>
+                <input type="password" id="cvv" name="cvv" maxlength="4" placeholder="***" class="form-control" required />
+            </div>
+        </div>SimpleLazyObject
+
+        <div class="mb-3">
+            <label for="amount" class="form-label">Amount (₺)</label>
+            <input type="number" id="amount" name="amount" class="form-control" value="{{ amount }}" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label for="payment_type" class="form-label">Payment Type</label>
+            <select id="payment_type" name="payment_type" class="form-select" required>
+                <option value="single">Single Payment</option>
+                <option value="installment">Installment</option>
+            </select>
+        </div>
+
+        <div class="mb-3" id="installments_div" style="display:none;">
+            <label for="installments" class="form-label">Number of Installments</label>
+            <input type="number" id="installments" name="installments" min="1" max="12" class="form-control" value="1" />
+            <small class="text-muted">Choose between 1 and 12 installments</small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Complete Payment</button>
+    </form>
+</div>
+
+<script>
+    const paymentTypeSelect = document.getElementById('payment_type');
+    const installmentsDiv = document.getElementById('installments_div');
+    const installmentsInput = document.getElementById('installments');
+
+    function toggleInstallments() {
+        if (paymentTypeSelect.value === 'installment') {
+            installmentsDiv.style.display = 'block';
+            installmentsInput.required = true;
+        } else {
+            installmentsDiv.style.display = 'none';
+            installmentsInput.value = 1;
+            installmentsInput.required = false;
+        }
+    }
+
+    paymentTypeSelect.addEventListener('change', toggleInstallments);
+    window.onload = toggleInstallments;
+</script>
+</body>
+</html>

@@ -10,5 +10,5 @@ urlpatterns = [
     path('main/', include('main.urls')),
     path('tickets/', include('tickets.urls')),
     path('sepet/', include('sepet.urls')),
-
+    path('payments/', include('payments.urls')), 
 ]
