@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Home Page</title>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #2d3748, #3182ce);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+
+    .home-container {
+      background-color: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 15px;
+      width: 400px;
+    }
+
+    h2 {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-bottom: 15px;
+    }
+
+    button:hover {
+      background-color: #1d4ed8;
+    }
+
+    .register-link {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #e0e0e0;
+    }
+
+    .register-link a {
+      color: #90cdf4;
+      text-decoration: none;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="home-container">
+    <h2>Welcome</h2>
+    <p>Choose your action below:</p>
+
+    <button onclick="window.location.href='{% url 'users:sign_in' %}'">Sign In</button>
+    <button onclick="window.location.href='{% url 'users:register' %}'">Sign Up</button>
+    <button onclick="window.location.href='/admin'">Admin Panel</button>
+  </div>
+
+</body>
+</html>
