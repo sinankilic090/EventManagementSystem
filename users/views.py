@@ -4,6 +4,15 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import check_password, make_password
 from .models import User
+from django.http import HttpResponse
+
+def test_session_view(request):
+    user_id = request.session.get("user_id")
+    if user_id:
+        return HttpResponse(f"Giriş yapılmış. Kullanıcı ID: {user_id}")
+    else:
+        return HttpResponse("Giriş yapılmamış.")
+
 
 
 def register_view(request):
@@ -57,12 +66,16 @@ def sign_in_view(request):
 
         login(request, user)
 
+        # ✅ Oturum ID'yi manuel olarak kaydet
+        request.session["user_id"] = user.id
+
         if user.must_change_password:
             return redirect('users:change_password')
 
         return redirect('main')
 
     return render(request, 'sign_in.html')
+
 
 
 @login_required(login_url='users:sign_in')

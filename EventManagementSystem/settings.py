@@ -39,7 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'main',
     'users',
-    "home",
+    'home',
+    'rest_framework',   # ✅ DRF paketi
+    'etkinlik',
+    'tickets',
+    'sepet',
+
 ]
 
 MIDDLEWARE = [
@@ -124,4 +129,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
+OPENWEATHER_API_KEY = 'afa03e98558cf6f0ab22f9f4a1f92cda'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
