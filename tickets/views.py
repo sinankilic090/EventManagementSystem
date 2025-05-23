@@ -6,6 +6,15 @@ from .models import Ticket
 from users.models import User
 from django.utils.timezone import now
 
+# Helper: bilet türüne göre fiyatı al
+def get_bilet_fiyati(event, bilet_turu):
+    if bilet_turu == "vip":
+        return event.vip_fiyat or 0
+    elif bilet_turu == "ogrenci":
+        return event.ogrenci_fiyat or 0
+    else:
+        return event.fiyat or 0
+
 # Sepete Ekle
 def sepet_ekle_view(request, etkinlik_id):
     event = get_object_or_404(Etkinlik, id=etkinlik_id)
@@ -21,10 +30,8 @@ def sepet_ekle_view(request, etkinlik_id):
         return redirect("sign_in")
 
     if request.method == "POST":
-        try:
-            adet = int(request.POST.get("adet", 1))
-        except ValueError:
-            adet = 1
+        adet = int(request.POST.get("adet", 1))
+        bilet_turu = request.POST.get("bilet_turu", "normal")
 
         if adet < 1:
             adet = 1
@@ -36,12 +43,12 @@ def sepet_ekle_view(request, etkinlik_id):
             error_message = "Stoktan fazla bilet ekleyemezsiniz."
             messages.error(request, error_message)
         else:
-            existing_item = CartItem.objects.filter(user=user, etkinlik=event).first()
+            existing_item = CartItem.objects.filter(user=user, etkinlik=event, bilet_turu=bilet_turu).first()
             if existing_item:
                 existing_item.adet += adet
                 existing_item.save()
             else:
-                CartItem.objects.create(user=user, etkinlik=event, adet=adet)
+                CartItem.objects.create(user=user, etkinlik=event, adet=adet, bilet_turu=bilet_turu)
 
             messages.success(request, "Etkinlik sepete eklendi.")
             return redirect("main")
@@ -62,7 +69,10 @@ def sepet_view(request):
     user = get_object_or_404(User, pk=user_id)
     cart_items = CartItem.objects.filter(user=user)
 
-    total_price = sum(item.adet * item.etkinlik.fiyat for item in cart_items)
+    total_price = 0
+    for item in cart_items:
+        fiyat = get_bilet_fiyati(item.etkinlik, item.bilet_turu)
+        total_price += item.adet * fiyat
 
     return render(request, "sepet.html", {
         'cart_items': cart_items,
@@ -92,14 +102,17 @@ def satin_al_view(request):
     # Hepsi uygunsa satın al
     for item in cart_items:
         etkinlik = item.etkinlik
+        fiyat = get_bilet_fiyati(etkinlik, item.bilet_turu)
+
         Ticket.objects.create(
             user=user,
             etkinlik=etkinlik,
             adet=item.adet,
             satin_alma_tarihi=now(),
-            toplam_fiyat=item.adet * etkinlik.fiyat
+            toplam_fiyat=item.adet * fiyat,
+            bilet_turu=item.bilet_turu
         )
-        #etkinlik.kalan_bilet -= item.adet
+        etkinlik.kalan_bilet -= item.adet
         etkinlik.save()
 
     cart_items.delete()

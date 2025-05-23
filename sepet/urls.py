@@ -8,4 +8,6 @@ urlpatterns = [
     # Ödeme sayfası gibi başka url'ler varsa buraya ekleyebilirsin
     # Örnek:
     # path('odeme/', views.odeme_view, name='odeme'),
+    path('kaldir/<int:item_id>/', views.sepetten_kaldir, name='sepetten_kaldir'),
+
 ]

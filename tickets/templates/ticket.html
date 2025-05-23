@@ -21,7 +21,6 @@
 <body>
   {% block content %}
 
-  <!-- Mesajları göster -->
   {% if messages %}
     <div class="container mt-3">
       {% for message in messages %}
@@ -35,31 +34,52 @@
 
   <div class="container mt-4">
     <div class="row align-items-center">
-      <!-- Etkinlik görseli -->
       <div class="col-md-4 text-center mb-3">
         <img src="{{ event.image_url }}" alt="{{ event.isim }}" class="img-fluid rounded" style="max-height: 300px;" />
       </div>
 
-      <!-- Etkinlik bilgileri ve sepete ekleme formu -->
       <div class="col-md-8">
         <div class="card p-4">
           <h2 class="mb-3">{{ event.isim }}</h2>
           <p><i class="fa-solid fa-calendar-days"></i> <strong>Tarih:</strong> {{ event.tarih|date:"d M Y H:i" }}</p>
           <p><i class="fa-solid fa-location-dot"></i> <strong>Yer:</strong> {{ event.konum }}</p>
-          <p><i class="fa-solid fa-money-bill-wave"></i> <strong>Fiyat:</strong> {{ event.fiyat }} ₺</p>
+
           <p><i class="fa-solid fa-ticket"></i> <strong>Kalan Bilet:</strong> {{ remaining_tickets }}</p>
 
           {% if remaining_tickets > 0 %}
           <form method="post" action="{% url 'tickets:sepet_ekle' event.id %}">
             {% csrf_token %}
-              <div class="form-group">
-                <label for="adet">Bilet Adedi</label>
-                <input type="number" id="adet" name="adet" class="form-control" value="1" min="1" max="{{ remaining_tickets }}" required>
-              </div>
-              <button type="submit" class="btn btn-success btn-lg mt-3 w-100">
-                <i class="fas fa-cart-plus"></i> Sepete Ekle
-              </button>
-            </form>
+
+            <div class="form-group mb-3">
+              <label for="bilet_turu">Bilet Türü</label>
+              <select id="bilet_turu" name="bilet_turu" class="form-select" required onchange="updatePrice()">
+                <option value="normal" data-fiyat="{{ event.fiyat }}">Normal - {{ event.fiyat }} ₺</option>
+                <option value="vip" data-fiyat="{{ event.vip_fiyat|default:0 }}">VIP - {{ event.vip_fiyat|default:"-" }} ₺</option>
+                <option value="ogrenci" data-fiyat="{{ event.ogrenci_fiyat|default:0 }}">Öğrenci - {{ event.ogrenci_fiyat|default:"-" }} ₺</option>
+              </select>
+            </div>
+
+            <p><strong>Seçilen Bilet Fiyatı: <span id="secili_fiyat">{{ event.fiyat }}</span> ₺</strong></p>
+
+            <div class="form-group">
+              <label for="adet">Bilet Adedi</label>
+              <input type="number" id="adet" name="adet" class="form-control" value="1" min="1" max="{{ remaining_tickets }}" required>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-lg mt-3 w-100">
+              <i class="fas fa-cart-plus"></i> Sepete Ekle
+            </button>
+          </form>
+
+          <script>
+            function updatePrice() {
+              const select = document.getElementById('bilet_turu');
+              const selectedOption = select.options[select.selectedIndex];
+              const fiyat = selectedOption.getAttribute('data-fiyat') || 0;
+              document.getElementById('secili_fiyat').textContent = fiyat;
+            }
+          </script>
+
           {% else %}
             <div class="alert alert-warning mt-4">
               <i class="fa-solid fa-circle-exclamation"></i> Biletler tükenmiştir.
@@ -71,7 +91,6 @@
   </div>
   {% endblock %}
 
-  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
