@@ -99,7 +99,7 @@ def satin_al_view(request):
             satin_alma_tarihi=now(),
             toplam_fiyat=item.adet * etkinlik.fiyat
         )
-        etkinlik.kalan_bilet -= item.adet
+        #etkinlik.kalan_bilet -= item.adet
         etkinlik.save()
 
     cart_items.delete()

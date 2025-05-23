@@ -7,64 +7,40 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    .search-form {
-      max-width: 500px;
-      width: 100%;
-    }
+    .search-form { max-width: 500px; width: 100%; }
     .event-button-group {
       margin-top: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
+      display: flex; flex-wrap: wrap;
+      gap: 10px; justify-content: center;
     }
     .event-button, .btn-custom {
-      font-size: 16px;
-      padding: 10px 20px;
+      font-size: 16px; padding: 10px 20px;
       border: 2px solid #007bff;
-      background-color: white;
-      color: #007bff;
-      border-radius: 25px;
-      cursor: pointer;
+      background-color: white; color: #007bff;
+      border-radius: 25px; cursor: pointer;
       transition: all 0.3s ease;
     }
     .event-button:hover, .btn-custom:hover {
-      background-color: #007bff;
-      color: white;
+      background-color: #007bff; color: white;
     }
-    .form-control {
-      border-radius: 25px;
-    }
+    .form-control { border-radius: 25px; }
     .btn-outline-light {
       border-radius: 25px;
       padding: 10px 20px;
     }
-    .carousel-inner {
-      max-height: 220px;
-    }
-    /* Butonları küçült ve yanlara kaydır */
+    .carousel-inner { max-height: 220px; }
     .carousel-control-prev, .carousel-control-next {
-      width: 35px;
-      height: 35px;
-      top: 50%;
-      transform: translateY(-50%);
+      width: 35px; height: 35px;
+      top: 50%; transform: translateY(-50%);
     }
-
-    .carousel-control-prev {
-      left: 5px;
-    }
-
-    .carousel-control-next {
-      right: 5px;
-    }
-
+    .carousel-control-prev { left: 5px; }
+    .carousel-control-next { right: 5px; }
     .carousel-control-prev-icon,
     .carousel-control-next-icon {
       background-color: black;
       border-radius: 50%;
       background-size: 100%, 100%;
-      width: 35px;
-      height: 35px;
+      width: 35px; height: 35px;
     }
   </style>
 </head>
@@ -74,7 +50,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid d-flex justify-content-between align-items-center">
     <a class="navbar-brand" href="#">Etkinlik Yönetim Sistemi</a>
-
     <form class="search-form d-flex mx-auto" role="search">
       <div class="input-group w-100">
         <input class="form-control" type="search" placeholder="Etkinlik ara..." aria-label="Ara" />
@@ -83,10 +58,9 @@
         </button>
       </div>
     </form>
-
     <a href="/sepet" class="btn btn-custom text-decoration-none d-flex align-items-center">
-  🛒 Sepetim <span class="badge bg-dark text-white ms-2">0</span>
-</a>
+      🛒 Sepetim <span class="badge bg-dark text-white ms-2">0</span>
+    </a>
   </div>
 </nav>
 
@@ -132,7 +106,6 @@
               </div>
               {% endfor %}
             </div>
-            
             <button class="carousel-control-prev" type="button" data-bs-target="#etkinlikSlider" data-bs-slide="prev">
               <span class="carousel-control-prev-icon"></span>
               <span class="visually-hidden">Önceki</span>
@@ -153,18 +126,16 @@
         <div class="card-body">
           <div id="duyuruSlider" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
+              {% for duyuru in duyurular %}
+              <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <h5>📢 {{ duyuru.baslik }}</h5>
+                <p>{{ duyuru.aciklama }}</p>
+              </div>
+              {% empty %}
               <div class="carousel-item active">
-                <h5>📢 Etkinlik Kaydı Açıldı</h5>
-                <p>Konser gecesi için kayıtlar başladı.</p>
+                <p>Şu anda duyuru bulunmamaktadır.</p>
               </div>
-              <div class="carousel-item">
-                <h5>🆕 Yeni Etkinlik Ekleniyor</h5>
-                <p>Haziran'da girişimcilik forumu geliyor.</p>
-              </div>
-              <div class="carousel-item">
-                <h5>⏰ Son Başvuru Yaklaşıyor</h5>
-                <p>Teknoloji Zirvesi için son başvuru 15 Mayıs.</p>
-              </div>
+              {% endfor %}
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#duyuruSlider" data-bs-slide="prev">
               <span class="carousel-control-prev-icon"></span>

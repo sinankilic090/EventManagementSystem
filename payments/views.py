@@ -53,7 +53,7 @@ def payment_view(request):
                 # Bilet stok güncelle ve ticket oluştur
                 for item in cart_items:
                     etkinlik = item.etkinlik
-                    etkinlik.kalan_bilet -= item.adet
+                    #etkinlik.kalan_bilet -= item.adet
                     etkinlik.save()
 
                     Ticket.objects.create(

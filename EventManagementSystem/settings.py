@@ -44,7 +44,9 @@ INSTALLED_APPS = [
     'etkinlik',
     'tickets',
     'sepet',
-    'payments'
+    'payments',
+    'duyurular',
+
 
 ]
 
