@@ -7,34 +7,11 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-    .search-form { max-width: 500px; width: 100%; }
-    .event-button-group {
-      margin-top: 20px;
-      display: flex; flex-wrap: wrap;
-      gap: 10px; justify-content: center;
-    }
-    .event-button, .btn-custom {
-      font-size: 16px; padding: 10px 20px;
-      border: 2px solid #007bff;
-      background-color: white; color: #007bff;
-      border-radius: 25px; cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .event-button:hover, .btn-custom:hover {
-      background-color: #007bff; color: white;
-    }
-    .form-control { border-radius: 25px; }
-    .btn-outline-light {
-      border-radius: 25px;
-      padding: 10px 20px;
-    }
     .carousel-inner { max-height: 220px; }
     .carousel-control-prev, .carousel-control-next {
       width: 35px; height: 35px;
       top: 50%; transform: translateY(-50%);
     }
-    .carousel-control-prev { left: 5px; }
-    .carousel-control-next { right: 5px; }
     .carousel-control-prev-icon,
     .carousel-control-next-icon {
       background-color: black;
@@ -50,54 +27,48 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid d-flex justify-content-between align-items-center">
     <a class="navbar-brand" href="#">Etkinlik Yönetim Sistemi</a>
-    <form class="search-form d-flex mx-auto" role="search">
+    <form class="d-flex mx-auto search-form" role="search">
       <div class="input-group w-100">
-        <input class="form-control" type="search" placeholder="Etkinlik ara..." aria-label="Ara" />
-        <button class="btn btn-outline-light" type="submit">
-          <i class="fas fa-search"></i>
-        </button>
+        <input class="form-control" type="search" name="q" placeholder="Etkinlik ara..." />
+        <button class="btn btn-outline-light" type="submit"><i class="fas fa-search"></i></button>
       </div>
     </form>
-    <a href="/sepet" class="btn btn-custom text-decoration-none d-flex align-items-center">
-      🛒 Sepetim <span class="badge bg-dark text-white ms-2">0</span>
-    </a>
+    <a href="/sepet" class="btn btn-outline-light">🛒 Sepetim</a>
   </div>
 </nav>
 
-<!-- Etkinlik Türleri Butonları -->
-<div class="container py-5">
-  <div class="text-center">
-    <h2>Etkinlik Türlerine Göz Atın</h2>
-    <div class="event-button-group">
-      <button class="event-button">Sinema</button>
-      <button class="event-button">Tiyatro</button>
-      <button class="event-button">Konser</button>
-      <button class="event-button">Sergi ve Sanat Galerisi</button>
-      <button class="event-button">Geziler</button>
-      <button class="event-button">Stand-up Gösterisi</button>
-    </div>
-  </div>
+<!-- Etkinlik Türü Seçimi -->
+<div class="container py-4">
+  <h4 class="text-center">İlgi Alanınızı Seçin</h4>
+  <form method="get" class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+    {% for tur in turler %}
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="checkbox" name="tur" value="{{ tur }}" id="tur_{{ forloop.counter }}" {% if tur in secilen_turler %}checked{% endif %}>
+        <label class="form-check-label" for="tur_{{ forloop.counter }}">{{ tur }}</label>
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary rounded-pill ms-3">Filtrele</button>
+  </form>
 </div>
 
-<!-- Etkinlikler ve Duyurular Kartları -->
-<div class="container py-5">
+<div class="container py-4">
   <div class="row g-4">
 
-    <!-- Etkinlikler -->
+    <!-- 1. Tüm Etkinlikler -->
     <div class="col-md-6">
       <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">Etkinlikler</div>
+        <div class="card-header bg-primary text-white">Tüm Etkinlikler</div>
         <div class="card-body">
-          <div id="etkinlikSlider" class="carousel slide" data-bs-ride="carousel">
+          <div id="tumEtkinliklerSlider" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-inner">
               {% for etkinlik in etkinlikler %}
               <div class="carousel-item {% if forloop.first %}active{% endif %}">
                 <a href="{% url 'tickets:sepet_ekle' etkinlik.id %}">
-                  <img src="{{ etkinlik.image_url }}" class="d-block w-100" alt="{{ etkinlik.isim }}" style="max-height:220px; object-fit:cover;">
+                  <img src="{{ etkinlik.image_url }}" class="d-block w-100" alt="{{ etkinlik.isim }}" style="object-fit:cover; max-height:220px;">
                 </a>
                 <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
                   <h5>{{ etkinlik.isim }}</h5>
-                  <p>{{ etkinlik.tarih|date:"d F Y" }} - {{ etkinlik.sehir }}</p>
+                  <p>{{ etkinlik.tur }} - {{ etkinlik.tarih|date:"d F Y" }} - {{ etkinlik.sehir }}</p>
                 </div>
               </div>
               {% empty %}
@@ -106,20 +77,18 @@
               </div>
               {% endfor %}
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#etkinlikSlider" data-bs-slide="prev">
+            <button class="carousel-control-prev" type="button" data-bs-target="#tumEtkinliklerSlider" data-bs-slide="prev">
               <span class="carousel-control-prev-icon"></span>
-              <span class="visually-hidden">Önceki</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#etkinlikSlider" data-bs-slide="next">
+            <button class="carousel-control-next" type="button" data-bs-target="#tumEtkinliklerSlider" data-bs-slide="next">
               <span class="carousel-control-next-icon"></span>
-              <span class="visually-hidden">Sonraki</span>
             </button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Duyurular -->
+    <!-- 2. Duyurular -->
     <div class="col-md-6">
       <div class="card shadow-sm">
         <div class="card-header bg-secondary text-white">Duyurular</div>
@@ -139,16 +108,46 @@
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#duyuruSlider" data-bs-slide="prev">
               <span class="carousel-control-prev-icon"></span>
-              <span class="visually-hidden">Önceki</span>
             </button>
             <button class="carousel-control-next" type="button" data-bs-target="#duyuruSlider" data-bs-slide="next">
               <span class="carousel-control-next-icon"></span>
-              <span class="visually-hidden">Sonraki</span>
             </button>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- 3. Filtreli Etkinlikler (kullanıcının seçtikleri) -->
+    {% if filtreli_etkinlikler %}
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">Seçilen Türlere Ait Etkinlikler</div>
+        <div class="card-body">
+          <div id="filtreliEtkinliklerSlider" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              {% for etkinlik in filtreli_etkinlikler %}
+              <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <a href="{% url 'tickets:sepet_ekle' etkinlik.id %}">
+                  <img src="{{ etkinlik.image_url }}" class="d-block w-100" alt="{{ etkinlik.isim }}" style="object-fit:cover; max-height:220px;">
+                </a>
+                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-2">
+                  <h5>{{ etkinlik.isim }}</h5>
+                  <p>{{ etkinlik.tur }} - {{ etkinlik.tarih|date:"d F Y" }} - {{ etkinlik.sehir }}</p>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#filtreliEtkinliklerSlider" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon"></span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#filtreliEtkinliklerSlider" data-bs-slide="next">
+              <span class="carousel-control-next-icon"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
 
   </div>
 </div>
