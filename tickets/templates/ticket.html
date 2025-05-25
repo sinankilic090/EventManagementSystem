@@ -41,9 +41,10 @@
       <div class="col-md-8">
         <div class="card p-4">
           <h2 class="mb-3">{{ event.isim }}</h2>
+
           <p><i class="fa-solid fa-calendar-days"></i> <strong>Tarih:</strong> {{ event.tarih|date:"d M Y H:i" }}</p>
           <p><i class="fa-solid fa-location-dot"></i> <strong>Yer:</strong> {{ event.konum }}</p>
-
+          <p><i class="fa-solid fa-list"></i> <strong>Tür:</strong> {{ event.tur }}</p>
           <p><i class="fa-solid fa-ticket"></i> <strong>Kalan Bilet:</strong> {{ remaining_tickets }}</p>
 
           {% if remaining_tickets > 0 %}

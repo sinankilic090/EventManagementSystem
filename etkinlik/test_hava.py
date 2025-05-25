@@ -14,7 +14,7 @@ def hava_durumu_kontrol(sehir):
         return None
 
 if __name__ == "__main__":
-    sehir = "Karabük"
+    sehir = "erzurum"
     durum = hava_durumu_kontrol(sehir)
     if durum and "rain" in durum:
         print("Etkinlik iptal olabilir.")
